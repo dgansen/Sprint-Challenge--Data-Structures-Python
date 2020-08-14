@@ -51,6 +51,7 @@ duplicates = []  # Return the list of duplicates in this data structure
 #     for name_2 in names_2:
 #         if name_1 == name_2:
 #             duplicates.append(name_1)
+###### ^ the above code operates with complexity of O(n^2)
 
 #Make the tree from the top
 top_node = AlphaTreeNode(None)
@@ -65,6 +66,8 @@ print(names_idx,'out of',len(names_1),'names filled')
 for name in names_2:
     if top_node.search(name,0):
         duplicates.append(name)
+
+### ^ the fixed code operates with complexity of O(log n)
 
 end_time = time.time()
 print (f"{len(duplicates)} duplicates:\n\n{', '.join(duplicates)}\n\n")
