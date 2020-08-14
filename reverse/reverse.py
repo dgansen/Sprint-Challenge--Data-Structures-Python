@@ -39,4 +39,22 @@ class LinkedList:
         return False
 
     def reverse_list(self, node, prev):
-        pass
+        #Loop through list and create connection map with lists of nodes
+        if not self.head:
+            return
+        
+        current = self.head
+        connections = []
+        while current:
+            if current.get_next():
+                connections.append([current, current.get_next()])
+            current = current.get_next()
+        
+        counter = 0
+        for pair in connections[-1::-1]:
+            if counter == 0:
+                self.head = pair[1]
+            pair[1].set_next(pair[0])
+            counter += 1
+
+
