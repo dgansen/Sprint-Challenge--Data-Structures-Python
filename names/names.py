@@ -10,12 +10,32 @@ class AlphaTreeNode:
         self.letter = letter
         # Dictionary of the node's children
         # They only exist if the tree creation had a name at one point that followed this order of letters
-        self.children = base_dict
+        self.children = {'a':None, 'b':None, 'c':None, 'd':None,
+                         'e':None, 'f':None, 'g':None, 'h':None,
+                         'i':None, 'j':None, 'k':None, 'l':None,
+                         'm':None, 'n':None, 'o':None, 'p':None,
+                         'q':None, 'r':None, 's':None, 't':None,
+                         'u':None, 'v':None, 'w':None, 'x':None,
+                         'y':None, 'z':None, ' ':None} #this would have been easier if base_dict were not mysteriously changing
+        
+        # names_1 contains 'Alyvia Stevenson', causing the names_2 entry 'Alyvia Stevens' to
+        # come back as a duplicate but it isn't. This is a stopgap measure for other 
+        # situations like this
+        self.is_end_for_short_name = False
     
     def insert(self, name, idx):
+        # Call from top_node with the desired name to fill and starting index of 0
         if idx == len(name):
+            if [*self.children.values()] != [None]*27:
+                # This catches the case of a long name leaving a confusing trail for a shorter name that is up to this point identical
+                self.is_end_for_short_name = True
+            
             #Reached the end of the name, exit recursion with this
-            return True
+            return True 
+        
+        # review statement for debugging
+        # if idx > 0 and name[idx-1].lower() != self.letter:
+        #     return False
 
         next_letter = name.lower()[idx]
         if not self.children[next_letter]:
@@ -24,10 +44,22 @@ class AlphaTreeNode:
     
     def search(self, name, idx):
         if idx == len(name):
-            #Reached the end of the name, return True and exit recursion
-            #All letters in this name are accounted for in proper order
-            return True
-        next_letter = name.lower()[idx]
+            if [*self.children.values()] == [None]*27:
+                # The tree has a path to the end of this name and no further
+                return True
+            elif [*self.children.values()] != [None]*27 and self.is_end_for_short_name:
+                # Even though this is the name's end, the tree continues beyond this point
+                # Fortunately, this short name came up in the tree's creation and has been flagged as True
+                return True
+            else:
+                # self.is_end_for_short_name has not been flagged and this is just the rare shortened version of a name that does exist in the tree's creation, but the short version was not
+                return False
+        
+        # review statement for debugging
+        # if idx > 0 and name[idx-1].lower() != self.letter:
+        #     return False
+        
+        next_letter = name[idx].lower()
         if self.children[next_letter]:
             #The tree has a connecting node for the next letter in the name
             return self.children[next_letter].search(name,idx+1)
@@ -56,7 +88,7 @@ duplicates = []  # Return the list of duplicates in this data structure
 #Make the tree from the top
 top_node = AlphaTreeNode(None)
 names_idx = 0
-for name in names_1[0:3]:
+for name in names_1:
     if not top_node.insert(name, 0):
         break
     names_idx += 1
